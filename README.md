@@ -76,40 +76,40 @@ $(‘a’).cssPageTransitions( {
 });
 ```
 
-## urlAttr
+### urlAttr
 Where the url to be loaded resides, default location is in the href-attribute.
 
-## externalUrl
+### externalUrl
 Whatever to allow external urls (not recommended)
 
-## onLoaded (function)
+### onLoaded (function)
 Add a custom function to execute when the new page has been loaded.
 
-## elementsOut
+### elementsOut
 Determines what element should be replaced with the newly loaded content.
 
-## elementsIn
+### elementsIn
 Determines what elements of the newly loaded page to replace with. Enter blank for entire page.
 
-## classOut
+### classOut
 What class to add to objects that are to be replaced (the class should contain the “fade out”-animation).
 
-## classIn
+### classIn
 What class to add to objects that will enter the page (the class should contain the “fade in”-animation).
 
-## alignWithPrevious
+### alignWithPrevious
 Auto align new elements to the top of the window. (requires classIn to have position: absolute to work properly).
 
-## scrollDisable
+### scrollDisable
 Disable scrolling events while transitioning.
 
-## updateUrl
+### updateUrl
 Update the browser displayed url. If the clicked link contained a “title”-attribute then the page title will also be set.
 
-## animationEnded (function)
+### animationEnded (function)
 Custom function that is called when the animation or transition of classOut is completed.
 
-## onErrorLoading (function)
+### onErrorLoading (function)
 Custom function that is called if the new page failed to load.
 
 # License
