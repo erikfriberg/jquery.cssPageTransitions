@@ -27,7 +27,8 @@
             alignWithPrevious: true,
             scrollDisable: true,
             updateUrl: true,
-            animationEnded: function() {}
+            animationEnded: function() {},
+            onErrorLoading: function() {}
         };
 
         /****** PUBLIC FUNCTIONS ******/
@@ -87,9 +88,18 @@
         }
 
         //Register classes and handle logic
-        var registerCssPageTransitions = function(data) {
+        var registerCssPageTransitions = function(data, response, status, xhr) {
+            //on error
+            if ( status == "error" ) {
+                //Call custom function
+                plugin.settings.onErrorLoading.call();
+                return 0;
+            }
+
             //add classes
             $(plugin.settings.elementsOut).addClass(plugin.settings.classOut);
+
+            //insert loaded element into page
             var newElement = $(data).children().addClass(plugin.settings.classIn).insertAfter(plugin.settings.elementsOut);
 
             //preventScrolling
@@ -102,7 +112,7 @@
                 $(newElement).css({ "top": (currentScroll-offset.top+1)+"px"});
             }
 
-            //Call custom cunction
+            //Call custom function
             plugin.settings.onLoaded.call();
 
             //bind new url
@@ -155,8 +165,8 @@
 
             var elem = this;
             //load the next page
-            var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(){
-                registerCssPageTransitions.apply(elem,[data])
+            var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr){
+                registerCssPageTransitions.apply(elem,[data,response,status,xhr])
             });
         };
 
