@@ -6,7 +6,7 @@
     "erikfriberg <erik.s.friberg@gmail.com>"
   ],
   "description": "Jquery plugin to simplify implementation of full page transitions via Ajax.",
-  "main": ".jquery.cssPageTransitions.js",
+  "main": "jquery.cssPageTransitions.js",
   "keywords": [
     "js", "css", "transition", "fullpage"
   ],
