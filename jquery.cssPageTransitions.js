@@ -20,7 +20,7 @@
             urlAttr: 'href',
             externalUrl: false,
             onLoaded: function() {},
-            elementsOut: 'body',
+            elementsOut: 'article',
             classOut: '.is-moveout',
             classIn: '.is-movein',
             alignWithPrevious: true,

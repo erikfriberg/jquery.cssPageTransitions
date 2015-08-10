@@ -1,0 +1,45 @@
+@keyframes prev-movein {
+    from { transform: translate3d(-100%,0,0); opacity: 0.5; }
+    to { transform: translate3d(0,0,0); opacity: 1; }
+}
+
+@keyframes prev-moveout {
+    from { transform: translate3d(0,0,0); opacity: 1; }
+    to { transform: translate3d(100%,0,0); opacity: 0.25; }
+}
+
+@keyframes next-movein {
+    from { transform: translate3d(100%,0,0); opacity: 0.5; }
+    to { transform: translate3d(0,0,0); opacity: 1; }
+}
+
+@keyframes next-moveout {
+    from { transform: translate3d(0,0,0); opacity: 1; }
+    to { transform: translate3d(-100%,0,0); opacity: 0.25; }
+}
+
+.is-movein-left, .is-movein-right, .is-moveout-left, .is-moveout-right {
+    backface-visibility: hidden;
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.is-movein-left {
+    animation: prev-movein 0.5s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+.is-moveout-left {
+    animation: prev-moveout 0.5s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    animation-fill-mode: forwards;
+}
+
+.is-movein-right {
+    animation: next-movein 0.5s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+.is-moveout-right {
+    animation: next-moveout 0.5s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    animation-fill-mode: forwards;
+}
