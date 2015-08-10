@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Page 1</title>
+        <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+        <script src="../jquery.cssPageTransitions.js"></script>
+        <link rel="stylesheet" href="./example.css" media="all">
+    </head>
+    <body style="margin: 0; padding: 0; font-size: 6vw; color: white;">
+        <article style="background-color: #7799bb; width: 100%; height: 100vh;">
+            <h1 style="font-size: 6vw; margin: 0; padding: 4rem;">Page 1</h1>
+            <a style='color: #224477;' title='Page 2' href='./page2.html' class='next'>Next Article</a>
+        </article>
+        <!-- Add transition handlers -->
+        <script>
+            var registerCssTransitions = function() {
+                //add transition to .prev
+                $('.prev').cssPageTransitions( {
+                    elementsOut: 'article',
+                    classOut: 'is-moveout-left',
+                    classIn: 'is-movein-left',
+                    animationEnded: function() {
+                        $('.is-moveout-left').remove();
+                        registerCssTransitions();
+                    }
+                });
+
+                //add transitions to .next
+                $('.next').cssPageTransitions( {
+                    elementsOut: 'article',
+                    classOut: 'is-moveout-right',
+                    classIn: 'is-movein-right',
+                    animationEnded: function() {
+                        $('.is-moveout-right').remove();
+                        registerCssTransitions();
+                    }
+                });
+            };
+
+            $( document ).ready(function() {
+                registerCssTransitions();
+            });
+        </script>
+    </body>
+</html>

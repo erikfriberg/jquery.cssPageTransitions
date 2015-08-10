@@ -21,6 +21,7 @@
             externalUrl: false,
             onLoaded: function() {},
             elementsOut: 'article',
+            elementsIn: 'article',
             classOut: '.is-moveout',
             classIn: '.is-movein',
             alignWithPrevious: true,
@@ -89,7 +90,7 @@
         var registerCssPageTransitions = function(data) {
             //add classes
             $(plugin.settings.elementsOut).addClass(plugin.settings.classOut);
-            var newElement = $(data).addClass(plugin.settings.classIn).insertAfter(plugin.settings.elementsOut);
+            var newElement = $(data).children().addClass(plugin.settings.classIn).insertAfter(plugin.settings.elementsOut);
 
             //preventScrolling
             plugin.canScroll = false;
@@ -154,7 +155,7 @@
 
             var elem = this;
             //load the next page
-            $.get( url, function(data){
+            var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(){
                 registerCssPageTransitions.apply(elem,[data])
             });
         };
@@ -163,6 +164,8 @@
         plugin.init = function() {
             plugin.settings = $.extend({}, defaults, options);
             plugin.bindTouchClicks(element, getUrlIfLocal);
+
+            plugin.bindBackButtonUrl();
 
             //bind scrollevent
             if(plugin.settings.scrollDisable) {
