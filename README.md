@@ -112,6 +112,13 @@ Custom function that is called when the animation or transition of classOut is c
 ### onErrorLoading (function)
 Custom function that is called if the new page failed to load.
 
+## Install
+Feel free to install via bower
+
+```terminal
+bower install jquery.lazyload
+```
+
 ## License
 
 All code licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php). All images licensed under [Creative Commons Attribution 3.0 Unported License](http://creativecommons.org/licenses/by/3.0/deed.en_US).
