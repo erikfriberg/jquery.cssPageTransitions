@@ -56,7 +56,7 @@ $( document ).ready(function() {
 
 This causes the targeted class element named “.elemToReplace” to transition out and the new source will be loaded to take it’s place.
 
-# Settings
+## Settings
 These are all the available settings that can be called together with the cssPageTransitions plugin:
 
 ```js
@@ -112,6 +112,6 @@ Custom function that is called when the animation or transition of classOut is c
 ### onErrorLoading (function)
 Custom function that is called if the new page failed to load.
 
-# License
+## License
 
 All code licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php). All images licensed under [Creative Commons Attribution 3.0 Unported License](http://creativecommons.org/licenses/by/3.0/deed.en_US).
