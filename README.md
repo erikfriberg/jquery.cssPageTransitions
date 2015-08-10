@@ -44,16 +44,73 @@ Prepare your CSS with classes for “slide-in” animations and “slide-out” 
 }
 ```
 
-then all you need to do in your code is
+then all you need to do in your code is to attach cssPageTransitions to your internal page links:
 
 ```js
 $( document ).ready(function() {
-		$(‘.next’).cssPageTransitions( { 
-		elementsOut: ‘.elemToAnimate’
+		$(‘a’).cssPageTransitions( { 
+			elementsOut: ‘.elemToReplace’
+		});
 });
 ```
 
-This causes the targeted class element named “.elemToAnimate” to transition out and the new source will be loaded to take it’s place.
+This causes the targeted class element named “.elemToReplace” to transition out and the new source will be loaded to take it’s place.
+
+# Settings
+These are all the available settings that can be called together with the cssPageTransitions plugin:
+
+```js
+$(‘a’).cssPageTransitions( { 
+	urlAttr: ‘href’,
+	externalUrl: false,
+	onLoaded: function() {},
+	elementsOut: ‘article’,
+	elementsIn: ‘article’,
+	classOut: ‘.is-moveout’,
+	classIn: ‘.is-movein’,
+	alignWithPrevious: true,
+	scrollDisable: true,
+	updateUrl: true,
+	animationEnded: function() {},
+	onErrorLoading: function() {}
+});
+```
+
+## urlAttr
+Where the url to be loaded resides, default location is in the href-attribute.
+
+## externalUrl
+Whatever to allow external urls (not recommended)
+
+## onLoaded (function)
+Add a custom function to execute when the new page has been loaded.
+
+## elementsOut
+Determines what element should be replaced with the newly loaded content.
+
+## elementsIn
+Determines what elements of the newly loaded page to replace with. Enter blank for entire page.
+
+## classOut
+What class to add to objects that are to be replaced (the class should contain the “fade out”-animation).
+
+## classIn
+What class to add to objects that will enter the page (the class should contain the “fade in”-animation).
+
+## alignWithPrevious
+Auto align new elements to the top of the window. (requires classIn to have position: absolute to work properly).
+
+## scrollDisable
+Disable scrolling events while transitioning.
+
+## updateUrl
+Update the browser displayed url. If the clicked link contained a “title”-attribute then the page title will also be set.
+
+## animationEnded (function)
+Custom function that is called when the animation or transition of classOut is completed.
+
+## onErrorLoading (function)
+Custom function that is called if the new page failed to load.
 
 # License
 
