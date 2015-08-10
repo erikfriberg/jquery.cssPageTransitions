@@ -53,9 +53,7 @@
         //bind event to make back button update after pushState event
         plugin.bindBackButtonUrl = function() {
             $(window).one("popstate", function(e) {
-                if (e.originalEvent.state !== null) {
-                    window.location.reload();
-                }
+                window.location.reload();
             });
         };
 
