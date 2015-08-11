@@ -1,17 +1,14 @@
-'use strict';
-
 //jQuery plugin to simplify implementation of full page transitions
 //2015 — Erik Friberg
 
 (function($) {
 
+  'use strict';
+
     $.cssPageTransitions = function(element, options) {
 
         var plugin = this;
         plugin.settings = {};
-
-        var $element = $(element),
-             element = element;
 
         plugin.canScroll = true;
 
@@ -61,7 +58,7 @@
         plugin.bindTouchClicks = function(elem,callbackFunction) {
             var e = 'ontouchstart' in $(window) ? 'touchstart' : 'click';
             //bind callback event so that this is preserved
-            $(elem).on(e, function(e){callbackFunction.apply(elem,[e])});
+            $(elem).on(e, function(e){callbackFunction.apply(elem,[e]);});
         };
 
         //executes customFunction on animationEnd and transitonEnd
@@ -83,7 +80,7 @@
                     ev.preventDefault();
                 }
             });
-        }
+        };
 
         //Register classes and handle logic
         var registerCssPageTransitions = function(data, response, status, xhr) {
@@ -114,7 +111,7 @@
             plugin.settings.onLoaded.call();
 
             //bind new url
-            if(plugin.settings.updateUrl == true){
+            if(plugin.settings.updateUrl === true){
                 plugin.bindNewLocalUrl($(this).attr(plugin.settings.urlAttr));
                 var title = $(this).attr('title');
                 if( typeof(title) != 'undefined'){
@@ -123,7 +120,7 @@
             }
 
             //handle animationEnds
-            plugin.bindAnimationTranstionEnd(plugin.settings.elementsOut, function(e) {
+            plugin.bindAnimationTranstionEnd(plugin.settings.elementsOut, function() {
 
                 //return scroll control
                 plugin.canScroll = true;
@@ -155,7 +152,7 @@
 
             //check if the link is local, if not continue as normal
             if(!plugin.localUrl(url) && !plugin.settings.externalUrl) {
-                return 0;
+                return;
             }
 
             //prevent default link action
@@ -164,7 +161,7 @@
             var elem = this;
             //load the next page
             var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr){
-                registerCssPageTransitions.apply(elem,[data,response,status,xhr])
+                registerCssPageTransitions.apply(elem,[data,response,status,xhr]);
             });
         };
 
@@ -191,16 +188,16 @@
         //Fire up the plugin
         plugin.init();
 
-    }
+    };
 
     // add the plugin to the jQuery.fn object
     $.fn.cssPageTransitions = function(options) {
         return this.each(function() {
-            if (undefined == $(this).data('cssPageTransitions')) {
+            if (undefined === $(this).data('cssPageTransitions')) {
                 var plugin = new $.cssPageTransitions(this, options);
                 $(this).data('cssPageTransitions', plugin);
             }
         });
-    }
+    };
 
 })(jQuery);
