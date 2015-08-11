@@ -116,9 +116,9 @@ Custom function that is called if the new page failed to load.
 Feel free to install via bower
 
 ```terminal
-bower install jquery.lazyload
+bower install jquery.cssPageTransitions
 ```
 
 ## License
 
-All code licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php). All images licensed under [Creative Commons Attribution 3.0 Unported License](http://creativecommons.org/licenses/by/3.0/deed.en_US).
+All code licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php).
