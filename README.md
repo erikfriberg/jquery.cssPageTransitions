@@ -1,7 +1,7 @@
 # jquery.cssPageTransitions
 Jquery plugin to simplify implementation of full page transitions via Ajax.
 
-![Example of the plugin in action](https://github.com/erikfriberg/jquery.cssPageTransitions/tree/master/example/cssPageTransitions.gif “Plugin in action”)
+![Example of the plugin in action](https://github.com/erikfriberg/jquery.cssPageTransitions/tree/master/example/cssPageTransitions.gif)
 
 The plugin is inspired by http://tympanus.net/codrops/2013/10/30/medium-style-page-transition/
 
