@@ -107,7 +107,7 @@
             if(plugin.settings.alignWithPrevious) {
                 var currentScroll = $(document).scrollTop();
                 var offset = $('.js-registerCssPageTransitions-wrapper').offset();
-                $(newElement).css({ "top": (currentScroll-offset.top+1)+"px"});
+                $(newElement).css({ "top": (currentScroll-offset.top)+"px"});
             }
 
             //Call custom function
