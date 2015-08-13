@@ -3,7 +3,7 @@
 
 (function($) {
 
-  'use strict';
+    'use strict';
 
     $.cssPageTransitions = function(element, options) {
 
@@ -16,6 +16,7 @@
         var defaults = {
             urlAttr: 'href',
             externalUrl: false,
+            onClicked: function() {},
             onLoaded: function() {},
             elementsOut: 'article',
             elementsIn: 'article',
@@ -39,18 +40,23 @@
         };
 
         //Add new URL address to history
-        plugin.bindNewLocalUrl = function(url){
+        plugin.bindNewLocalUrl = function(url) {
             //handle window location field
             if(url != window.location) {
                 //add the new page to the window.history
-                window.history.pushState({path: url},'',url);
+                window.history.pushState('{pushed: true}', null, url);
+                window.cssPageTransitionsInitialLoad = false;
             }
         };
 
         //bind event to make back button update after pushState event
         plugin.bindBackButtonUrl = function() {
-            $(window).one("popstate", function(e) {
-                window.location.reload();
+            $(window).on("popstate", function(e) {
+                if(e.originalEvent.state != null) {
+                    window.location.reload();
+                }else{
+                    window.history.replaceState('{pushed: true}', null, window.location);
+                }
             });
         };
 
@@ -73,13 +79,20 @@
         };
 
         /****** PRIVATE FUNCTIONS ******/
-        //prevent Scroll
-        var bindWindowScroll = function() {
-            $(window).on('mousewheel', function(ev) {
-                if ( !plugin.canScroll) {
-                    ev.preventDefault();
-                }
-            });
+        //toggle scroll
+        var bindWindowScroll = function(bind) {
+            var scrollEvent = 'mousewheel DOMMouseScroll';
+
+            //check if the scrollEvent already has been bound
+            if(bind) {
+                $(window).on('mousewheel DOMMouseScroll', function(ev) {
+                    if ( !plugin.canScroll) {
+                        ev.preventDefault();
+                    }
+                });
+            }else{
+                $(window).off(scrollEvent);
+            }
         };
 
         //Register classes and handle logic
@@ -127,7 +140,7 @@
 
                 //remove window event
                 if(plugin.settings.scrollDisable) {
-                    $(window).off('mousewheel');
+                    bindWindowScroll(false);
                 }
 
                 plugin.settings.animationEnded.call();
@@ -158,6 +171,9 @@
             //prevent default link action
             e.preventDefault();
 
+            //Call custom function
+            plugin.settings.onClicked.call();
+
             var elem = this;
             //load the next page
             var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr){
@@ -170,11 +186,19 @@
             plugin.settings = $.extend({}, defaults, options);
             plugin.bindTouchClicks(element, getUrlIfLocal);
 
-            plugin.bindBackButtonUrl();
+            //store the initial page
+            if('state' in window.history && window.history.state !== null) {
+                window.history.replaceState({path: document.location.href}, document.title, document.location.href);
+            }
+
+            //bind back button for corrected behaviour
+            if(plugin.settings.updateUrl === true){
+                plugin.bindBackButtonUrl();
+            }
 
             //bind scrollevent
             if(plugin.settings.scrollDisable) {
-                bindWindowScroll();
+                bindWindowScroll(true);
             }
 
             //add wrapper if it doesn't already exists

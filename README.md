@@ -65,6 +65,7 @@ These are all the available settings that can be called together with the cssPag
 $(‘a’).cssPageTransitions( { 
 	urlAttr: ‘href’,
 	externalUrl: false,
+    onClicked: function() {},
 	onLoaded: function() {},
 	elementsOut: ‘article’,
 	elementsIn: ‘article’,
@@ -84,8 +85,11 @@ Where the url to be loaded resides, default location is in the href-attribute.
 ### externalUrl
 Whatever to allow external urls (not recommended)
 
+### onClicked (function)
+Custom function that is called when the user has clicked the link.
+
 ### onLoaded (function)
-Add a custom function to execute when the new page has been loaded.
+Custom function that is called when the new page has been loaded successfully.
 
 ### elementsOut
 Determines what element should be replaced with the newly loaded content.
