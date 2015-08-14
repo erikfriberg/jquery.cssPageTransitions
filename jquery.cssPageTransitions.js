@@ -11,6 +11,7 @@
         plugin.settings = {};
 
         plugin.canScroll = true;
+        plugin.pushed = false;
 
         //setup defaults
         var defaults = {
@@ -45,14 +46,14 @@
             if(url != window.location) {
                 //add the new page to the window.history
                 window.history.pushState('{pushed: true}', null, url);
-                window.cssPageTransitionsInitialLoad = false;
+                plugin.pushed = true;
             }
         };
 
         //bind event to make back button update after pushState event
         plugin.bindBackButtonUrl = function() {
             $(window).on("popstate", function(e) {
-                if(e.originalEvent.state != null) {
+                if(plugin.pushed || e.originalEvent.state != null) {
                     window.location.reload();
                 }else{
                     window.history.replaceState('{pushed: true}', null, window.location);
