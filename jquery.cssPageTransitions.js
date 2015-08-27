@@ -26,6 +26,7 @@
             alignWithPrevious: true,
             scrollDisable: true,
             updateUrl: true,
+            iPadOptimization: true,
             animationEnded: function() {},
             onErrorLoading: function() {}
         };
@@ -121,6 +122,11 @@
                 $(newElement).css({ "top": (currentScroll-offset.top)+"px"});
             }
 
+            //avoid screen flickering in iPad
+            if(plugin.settings.iPadOptimization) {
+                $('.js-registerCssPageTransitions-wrapper').css({'overflow':'hidden', 'height' : $(plugin.settings.elementsOut).height()});
+            }
+
             //Call custom function
             plugin.settings.onLoaded.call();
 
@@ -151,6 +157,11 @@
                     $(newElement).css({ "top": "0px"});
                     var offset = $('.js-registerCssPageTransitions-wrapper').offset();
                     $(document).scrollTop(offset.top);
+                }
+
+                //remove iPad optimization
+                if(plugin.settings.iPadOptimization) {
+                    $('.js-registerCssPageTransitions-wrapper').css('overflow','visible');
                 }
 
                 //remove classes
@@ -203,7 +214,7 @@
             }
 
             //add wrapper if it doesn't already exists
-            if(plugin.settings.alignWithPrevious && !$('.js-registerCssPageTransitions-wrapper').length){
+            if((plugin.settings.iPadOptimization || plugin.settings.alignWithPrevious) && !$('.js-registerCssPageTransitions-wrapper').length){
                 var wrapper = $('<div />').addClass('js-registerCssPageTransitions-wrapper');
                 wrapper.css({'position': 'relative', 'width': '100%'});
                 $(plugin.settings.elementsOut).wrapAll(wrapper);

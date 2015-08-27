@@ -74,6 +74,7 @@ $(‘a’).cssPageTransitions( {
 	alignWithPrevious: true,
 	scrollDisable: true,
 	updateUrl: true,
+	iPadOptimization: true,
 	animationEnded: function() {},
 	onErrorLoading: function() {}
 });
@@ -111,6 +112,9 @@ Disable scrolling events while transitioning.
 
 ### updateUrl
 Update the browser displayed url. If the clicked link contained a “title”-attribute then the page title will also be set.
+
+### iPadOptimization
+Constrain rendering to viewport during animation to avoid flicker on some devices(such as iPad).
 
 ### animationEnded (function)
 Custom function that is called when the animation or transition of classOut is completed.
