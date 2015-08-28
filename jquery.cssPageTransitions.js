@@ -161,7 +161,7 @@
 
                 //remove iPad optimization
                 if(plugin.settings.iPadOptimization) {
-                    $('.js-registerCssPageTransitions-wrapper').css('overflow','visible');
+                    $('.js-registerCssPageTransitions-wrapper').css({'overflow':'visible','height':'auto'});
                 }
 
                 //remove classes
