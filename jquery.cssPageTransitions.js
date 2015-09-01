@@ -117,7 +117,6 @@
             if(plugin.settings.alignWithPrevious) {
                 plugin.newElement.css({ "top": "0px"});
                 var offset = plugin.wrapper.offset();
-                console.log(offset.top);
                 $(document).scrollTop(offset.top);
             }
 
