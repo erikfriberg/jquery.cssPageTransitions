@@ -168,11 +168,6 @@
             //start animating in
             startAnimationIn();
 
-            //bind scrollevent
-            if(plugin.settings.scrollDisable) {
-                plugin.togglePreventWindowScroll(true);
-            }
-
             //Call custom function
             plugin.settings.onLoaded.call();
 
@@ -210,6 +205,11 @@
 
             //start animating out
             startAnimationOut();
+
+            //bind scrollevent
+            if(plugin.settings.scrollDisable) {
+                plugin.togglePreventWindowScroll(true);
+            }
 
             //load the next page
             var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr) {
