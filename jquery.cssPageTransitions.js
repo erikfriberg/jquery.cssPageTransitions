@@ -24,8 +24,8 @@
             onClicked: function() {},
             elementsOut: 'article',
             elementsIn: 'article',
-            idOut: 'is-moveout',
-            idIn: 'is-movein',
+            classOut: '.is-moveout',
+            classIn: '.is-movein',
             alignWithPrevious: true,
             scrollDisable: true,
             updateUrl: true,
@@ -106,7 +106,7 @@
         //Start fading animation
         var startAnimationOut = function() {
             //add classes
-            plugin.elementsOut.attr('id',plugin.settings.idOut);
+            plugin.elementsOut.addClass(plugin.settings.classOut);
             //set the new element to align at the top of the previous content
             if(plugin.settings.alignWithPrevious) {
                 plugin.wrapper.css({'overflow':'hidden', 'height':plugin.elementsOut.height()});
@@ -142,6 +142,9 @@
                 plugin.wrapper.css({'overflow':'visible', 'height':'auto'});
             }
 
+            //remove classes
+            plugin.element.removeClass(plugin.settings.classOut);
+            plugin.newElement.removeClass(plugin.settings.classIn);
             return false;
         };
 
@@ -160,15 +163,10 @@
             }
 
             //insert loaded element into page
-            plugin.newElement = data.children().attr('id', plugin.settings.idIn).insertAfter(plugin.elementsOut);
+            plugin.newElement = data.children().addClass(plugin.settings.classIn).insertAfter(plugin.elementsOut);
 
             //start animating in
             startAnimationIn();
-
-            //bind scrollevent
-            if(plugin.settings.scrollDisable) {
-                plugin.togglePreventWindowScroll(true);
-            }
 
             //Call custom function
             plugin.settings.onLoaded.call();
@@ -207,6 +205,11 @@
 
             //start animating out
             startAnimationOut();
+
+            //bind scrollevent
+            if(plugin.settings.scrollDisable) {
+                plugin.togglePreventWindowScroll(true);
+            }
 
             //load the next page
             var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr) {
