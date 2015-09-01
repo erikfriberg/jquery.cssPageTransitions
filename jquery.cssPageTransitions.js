@@ -88,11 +88,11 @@
         /****** PRIVATE FUNCTIONS ******/
         //toggle scroll
         var bindWindowScroll = function(bind) {
-            var scrollEvent = 'mousewheel DOMMouseScroll';
+            var scrollEvent = 'mousewheel DOMMouseScroll touchmove scroll';
 
             //check if the scrollEvent already has been bound
             if(bind) {
-                $(window).on('mousewheel DOMMouseScroll', function(ev) {
+                $(window).on(scrollEvent, function(ev) {
                     if ( !plugin.canScroll) {
                         ev.preventDefault();
                     }
