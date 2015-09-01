@@ -170,6 +170,9 @@
             //start animating in
             startAnimationIn();
 
+            //prevent scrolling
+            plugin.canScroll = false;
+
             //Call custom function
             plugin.settings.onLoaded.call();
 
@@ -246,7 +249,6 @@
             //bind scrollevent
             if(plugin.settings.scrollDisable && plugin.canScroll === true) {
                 plugin.togglePreventWindowScroll(true);
-                plugin.canScroll = false;
             }
 
             //Trigger the plugin on click
