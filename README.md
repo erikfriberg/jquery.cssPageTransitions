@@ -64,17 +64,17 @@ These are all the available settings that can be called together with the cssPag
 ```js
 $(‘a’).cssPageTransitions( { 
 	urlAttr: ‘href’,
-  onLoaded: function() {},
-  onClicked: function() {},
-  elementsOut: ‘article’,
-  elementsIn: ‘article’,
-  classOut: ‘.is-moveout’,
-  classIn: ‘.is-movein’,
-  alignWithPrevious: true,
-  scrollDisable: true,
-  updateUrl: true,
-  animationEnded: function() {},
-  onErrorLoading: null
+	onLoaded: function() {},
+	onClicked: function() {},
+	elementsOut: ‘article’,
+	elementsIn: ‘article’,
+	classOut: ‘.is-moveout’,
+	classIn: ‘.is-movein’,
+	alignWithPrevious: true,
+	scrollDisable: true,
+	updateUrl: true,
+	animationEnded: function() {},
+	onErrorLoading: null
 });
 ```
 
