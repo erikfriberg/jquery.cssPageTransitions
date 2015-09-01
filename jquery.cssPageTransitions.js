@@ -13,6 +13,11 @@
         plugin.canScroll = true;
         plugin.pushed = false;
 
+        plugin.wrapper = null;
+        plugin.newElement = null;
+        plugin.element = $(element);
+        plugin.elementsOut = null;
+
         //setup defaults
         var defaults = {
             urlAttr: 'href',
@@ -74,7 +79,7 @@
             var animationEndEvent = 'webkitAnimationEnd oanimationend msAnimationEnd animationend webkitTransitionEnd otransitonend msTransitionEnd transitionend';
             $(elem).one(animationEndEvent, function(e) {
                 //prevents animationEndEvent from firing twice a bit backwards but works
-                $(elem).off(animationEndEvent);
+                $(this).off(animationEndEvent);
                 //bind callback event so that this is preserved
                 callbackFunction.apply(elem,[e]);
             });
@@ -97,6 +102,35 @@
             }
         };
 
+
+        var transitionAnimationEnd = function(e) {
+            //return scroll control
+            plugin.canScroll = true;
+
+            //remove window event
+            if(plugin.settings.scrollDisable) {
+                bindWindowScroll(false);
+            }
+
+            plugin.settings.animationEnded.call();
+
+            //Scroll to top of new content
+            if(plugin.settings.alignWithPrevious) {
+                plugin.newElement.css({ "top": "0px"});
+                var offset = plugin.wrapper.offset();
+                $(document).scrollTop(offset.top);
+            }
+
+            //remove iPad optimization
+            if(plugin.settings.iPadOptimization) {
+                plugin.wrapper.css({'overflow':'visible','height':'auto'});
+            }
+
+            //remove classes
+            plugin.element.removeClass(plugin.settings.classOut);
+            plugin.newElement.removeClass(plugin.settings.classIn);
+        };
+
         //Register classes and handle logic
         var registerCssPageTransitions = function(data, response, status, xhr) {
             //on error
@@ -107,10 +141,10 @@
             }
 
             //add classes
-            $(plugin.settings.elementsOut).addClass(plugin.settings.classOut);
+            plugin.elementsOut.addClass(plugin.settings.classOut);
 
             //insert loaded element into page
-            var newElement = $(data).children().addClass(plugin.settings.classIn).insertAfter(plugin.settings.elementsOut);
+            plugin.newElement = data.children().addClass(plugin.settings.classIn).insertAfter(plugin.elementsOut);
 
             //preventScrolling
             plugin.canScroll = false;
@@ -118,13 +152,13 @@
             //set the new element to align at the top of the previous content
             if(plugin.settings.alignWithPrevious) {
                 var currentScroll = $(document).scrollTop();
-                var offset = $('.js-registerCssPageTransitions-wrapper').offset();
-                $(newElement).css({ "top": (currentScroll-offset.top)+"px"});
+                var offset = plugin.wrapper.offset();
+                plugin.newElement.css({ "top": (currentScroll-offset.top)+"px"});
             }
 
             //avoid screen flickering in iPad
             if(plugin.settings.iPadOptimization) {
-                $('.js-registerCssPageTransitions-wrapper').css({'overflow':'hidden', 'height' : $(plugin.settings.elementsOut).height()});
+                plugin.wrapper.css({'overflow':'hidden', 'height' : plugin.elementsOut.height()});
             }
 
             //Call custom function
@@ -132,48 +166,21 @@
 
             //bind new url
             if(plugin.settings.updateUrl === true){
-                plugin.bindNewLocalUrl($(this).attr(plugin.settings.urlAttr));
-                var title = $(this).attr('title');
+                plugin.bindNewLocalUrl(plugin.element.attr(plugin.settings.urlAttr));
+                var title = plugin.element.attr('title');
                 if( typeof(title) != 'undefined'){
-                    document.title = $(this).attr('title');
+                    document.title = title;
                 }
             }
 
             //handle animationEnds
-            plugin.bindAnimationTranstionEnd(plugin.settings.elementsOut, function() {
-
-                //return scroll control
-                plugin.canScroll = true;
-
-                //remove window event
-                if(plugin.settings.scrollDisable) {
-                    bindWindowScroll(false);
-                }
-
-                plugin.settings.animationEnded.call();
-
-                //Scroll to top of new content
-                if(plugin.settings.alignWithPrevious) {
-                    $(newElement).css({ "top": "0px"});
-                    var offset = $('.js-registerCssPageTransitions-wrapper').offset();
-                    $(document).scrollTop(offset.top);
-                }
-
-                //remove iPad optimization
-                if(plugin.settings.iPadOptimization) {
-                    $('.js-registerCssPageTransitions-wrapper').css({'overflow':'visible','height':'auto'});
-                }
-
-                //remove classes
-                $(this).removeClass(plugin.settings.classOut);
-                $(newElement).removeClass(plugin.settings.classIn);
-            });
+            plugin.bindAnimationTranstionEnd(plugin.elementsOut, transitionAnimationEnd);
         };
 
         //Retrive from url
         var getUrlIfLocal = function(e) {
-            var url = $(this).attr(plugin.settings.urlAttr);
-            $(this).unbind(e);
+            var url = plugin.element.unbind(e)
+                .attr(plugin.settings.urlAttr);
 
             //check if the link is local, if not continue as normal
             if(!plugin.localUrl(url) && !plugin.settings.externalUrl) {
@@ -185,11 +192,9 @@
 
             //Call custom function
             plugin.settings.onClicked.call();
-
-            var elem = this;
             //load the next page
             var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr){
-                registerCssPageTransitions.apply(elem,[data,response,status,xhr]);
+                registerCssPageTransitions.apply(plugin.element,[data,response,status,xhr]);
             });
         };
 
@@ -197,6 +202,7 @@
         plugin.init = function() {
             plugin.settings = $.extend({}, defaults, options);
             plugin.bindTouchClicks(element, getUrlIfLocal);
+            plugin.elementsOut = $(plugin.settings.elementsOut);
 
             //store the initial page
             if('state' in window.history && window.history.state !== null) {
@@ -214,10 +220,10 @@
             }
 
             //add wrapper if it doesn't already exists
-            if((plugin.settings.iPadOptimization || plugin.settings.alignWithPrevious) && !$('.js-registerCssPageTransitions-wrapper').length){
-                var wrapper = $('<div />').addClass('js-registerCssPageTransitions-wrapper');
-                wrapper.css({'position': 'relative', 'width': '100%'});
-                $(plugin.settings.elementsOut).wrapAll(wrapper);
+            if((plugin.settings.iPadOptimization || plugin.settings.alignWithPrevious) && (plugin.wrapper == null) || (!plugin.wrapper.length)){
+                plugin.wrapper = $('<div />').attr('id','js-registerCssPageTransitions-wrapper');
+                plugin.wrapper.css({'position': 'relative', 'width': '100%'});
+                plugin.elementsOut.wrapAll(plugin.wrapper);
             }
         };
 
