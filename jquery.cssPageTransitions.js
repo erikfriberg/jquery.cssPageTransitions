@@ -11,7 +11,6 @@
         plugin.element = $(element);
         plugin.settings = {};
 
-        plugin.canScroll = true;
         plugin.pushed = false;
 
         plugin.wrapper = null;
@@ -128,9 +127,8 @@
         var registerTransitionAnimationEnd = function(e) {
 
             //Toggle scroll
-            if(plugin.settings.scrollDisable && !plugin.canScroll) {
+            if(plugin.settings.scrollDisable) {
                 plugin.togglePreventWindowScroll(false);
-                plugin.canScroll = true;
             }
 
             //call custom function
@@ -170,8 +168,10 @@
             //start animating in
             startAnimationIn();
 
-            //prevent scrolling
-            plugin.canScroll = false;
+            //bind scrollevent
+            if(plugin.settings.scrollDisable) {
+                plugin.togglePreventWindowScroll(true);
+            }
 
             //Call custom function
             plugin.settings.onLoaded.call();
@@ -244,11 +244,6 @@
             //bind back button for corrected behaviour
             if(plugin.settings.updateUrl === true){
                 plugin.bindBackButtonUrl();
-            }
-
-            //bind scrollevent
-            if(plugin.settings.scrollDisable && plugin.canScroll === true) {
-                plugin.togglePreventWindowScroll(true);
             }
 
             //Trigger the plugin on click
