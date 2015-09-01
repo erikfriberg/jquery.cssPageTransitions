@@ -64,33 +64,28 @@ These are all the available settings that can be called together with the cssPag
 ```js
 $(‘a’).cssPageTransitions( { 
 	urlAttr: ‘href’,
-	externalUrl: false,
-    onClicked: function() {},
-	onLoaded: function() {},
-	elementsOut: ‘article’,
-	elementsIn: ‘article’,
-	classOut: ‘.is-moveout’,
-	classIn: ‘.is-movein’,
-	alignWithPrevious: true,
-	scrollDisable: true,
-	updateUrl: true,
-	iPadOptimization: true,
-	animationEnded: function() {},
-	onErrorLoading: function() {}
+  onLoaded: function() {},
+  onClicked: function() {},
+  elementsOut: ‘article’,
+  elementsIn: ‘article’,
+  classOut: ‘.is-moveout’,
+  classIn: ‘.is-movein’,
+  alignWithPrevious: true,
+  scrollDisable: true,
+  updateUrl: true,
+  animationEnded: function() {},
+  onErrorLoading: null
 });
 ```
 
 ### urlAttr
 Where the url to be loaded resides, default location is in the href-attribute.
 
-### externalUrl
-Whatever to allow external urls (not recommended)
+### onLoaded (function)
+Custom function that is called when the new page has been loaded successfully.
 
 ### onClicked (function)
 Custom function that is called when the user has clicked the link.
-
-### onLoaded (function)
-Custom function that is called when the new page has been loaded successfully.
 
 ### elementsOut
 Determines what element should be replaced with the newly loaded content.
@@ -112,9 +107,6 @@ Disable scrolling events while transitioning.
 
 ### updateUrl
 Update the browser displayed url. If the clicked link contained a “title”-attribute then the page title will also be set.
-
-### iPadOptimization
-Constrain rendering to viewport during animation to avoid flicker on some devices(such as iPad).
 
 ### animationEnded (function)
 Custom function that is called when the animation or transition of classOut is completed.

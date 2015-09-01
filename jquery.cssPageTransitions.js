@@ -8,6 +8,7 @@
     $.cssPageTransitions = function(element, options) {
 
         var plugin = this;
+        plugin.element = $(element);
         plugin.settings = {};
 
         plugin.canScroll = true;
@@ -15,15 +16,13 @@
 
         plugin.wrapper = null;
         plugin.newElement = null;
-        plugin.element = $(element);
         plugin.elementsOut = null;
 
         //setup defaults
         var defaults = {
             urlAttr: 'href',
-            externalUrl: false,
-            onClicked: function() {},
             onLoaded: function() {},
+            onClicked: function() {},
             elementsOut: 'article',
             elementsIn: 'article',
             classOut: '.is-moveout',
@@ -31,14 +30,12 @@
             alignWithPrevious: true,
             scrollDisable: true,
             updateUrl: true,
-            iPadOptimization: true,
             animationEnded: function() {},
-            onErrorLoading: function() {}
+            onErrorLoading: null
         };
 
         /****** PUBLIC FUNCTIONS ******/
-        //plugin functions
-        //check if local url
+        //check if the url is local
         plugin.localUrl = function(url) {
             if (url.indexOf(document.domain) > -1 || url.indexOf(':') === -1) {
                 return true;
@@ -49,22 +46,25 @@
         //Add new URL address to history
         plugin.bindNewLocalUrl = function(url) {
             //handle window location field
-            if(url != window.location) {
+            if(url !== window.location) {
                 //add the new page to the window.history
                 window.history.pushState('{pushed: true}', null, url);
                 plugin.pushed = true;
+                return true;
             }
+            return false;
         };
 
         //bind event to make back button update after pushState event
         plugin.bindBackButtonUrl = function() {
             $(window).on("popstate", function(e) {
-                if(plugin.pushed || e.originalEvent.state != null) {
+                if(plugin.pushed || e.originalEvent.state !== null) {
                     window.location.reload();
                 }else{
                     window.history.replaceState('{pushed: true}', null, window.location);
                 }
             });
+            return false;
         };
 
         //replaces click actions on both mobile and desktop with customFunction
@@ -72,6 +72,7 @@
             var e = 'ontouchstart' in $(window) ? 'touchstart':'click';
             //bind callback event so that this is preserved
             $(elem).on(e, function(e){callbackFunction.apply(elem,[e]);});
+            return false;
         };
 
         //executes customFunction on animationEnd and transitonEnd
@@ -83,34 +84,56 @@
                 //bind callback event so that this is preserved
                 callbackFunction.apply(elem,[e]);
             });
+            return false;
         };
 
-        /****** PRIVATE FUNCTIONS ******/
         //toggle scroll
-        var bindWindowScroll = function(bind) {
+        plugin.togglePreventWindowScroll = function(bind) {
             var scrollEvent = 'mousewheel DOMMouseScroll touchmove scroll';
 
-            //check if the scrollEvent already has been bound
             if(bind) {
                 $(window).on(scrollEvent, function(ev) {
-                    if ( !plugin.canScroll) {
-                        ev.preventDefault();
-                    }
+                    ev.preventDefault();
                 });
+                return true;
             }else{
                 $(window).off(scrollEvent);
             }
+            return false;
         };
 
-        var transitionAnimationEnd = function(e) {
-            //return scroll control
-            plugin.canScroll = true;
+        /****** PRIVATE FUNCTIONS ******/
 
-            //remove window event
-            if(plugin.settings.scrollDisable) {
-                bindWindowScroll(false);
+        //Start fading animation
+        var startAnimationOut = function() {
+            //add classes
+            plugin.elementsOut.addClass(plugin.settings.classOut);
+            //set the new element to align at the top of the previous content
+            if(plugin.settings.alignWithPrevious) {
+                plugin.wrapper.css({'overflow':'hidden', 'height':plugin.elementsOut.height()});
+            }
+        };
+
+        //Start fade in animation
+        var startAnimationIn = function() {
+            //set the new element to align at the top of the previous content
+            if(plugin.settings.alignWithPrevious) {
+                var currentScroll = $(document).scrollTop();
+                var offset = plugin.wrapper.offset();
+                plugin.newElement.css({ "top": (currentScroll-offset.top)+"px"});
+            }
+        };
+
+        //Functions after transition ends
+        var registerTransitionAnimationEnd = function(e) {
+
+            //Toggle scroll
+            if(plugin.settings.scrollDisable && !plugin.canScroll) {
+                plugin.togglePreventWindowScroll(false);
+                plugin.canScroll = true;
             }
 
+            //call custom function
             plugin.settings.animationEnded.call();
 
             //Scroll to top of new content
@@ -118,16 +141,13 @@
                 plugin.newElement.css({ "top": "0px"});
                 var offset = plugin.wrapper.offset();
                 $(document).scrollTop(offset.top);
-            }
-
-            //remove iPad optimization
-            if(plugin.settings.iPadOptimization) {
                 plugin.wrapper.css({'overflow':'visible', 'height':'auto'});
             }
 
             //remove classes
             plugin.element.removeClass(plugin.settings.classOut);
             plugin.newElement.removeClass(plugin.settings.classIn);
+            return false;
         };
 
         //Register classes and handle logic
@@ -135,30 +155,20 @@
             //on error
             if ( status == "error" ) {
                 //Call custom function
-                plugin.settings.onErrorLoading.call();
-                return 0;
+                if($.isFunction(plugin.settings.onErrorLoading)){
+                    plugin.settings.onErrorLoading.call();
+                }else{
+                    //if no custom error function was defined, send the user to the page without effects
+                    window.location.href = plugin.element.attr(plugin.settings.urlAttr);
+                }
+                return false;
             }
-
-            //add classes
-            plugin.elementsOut.addClass(plugin.settings.classOut);
 
             //insert loaded element into page
             plugin.newElement = data.children().addClass(plugin.settings.classIn).insertAfter(plugin.elementsOut);
 
-            //preventScrolling
-            plugin.canScroll = false;
-
-            //set the new element to align at the top of the previous content
-            if(plugin.settings.alignWithPrevious) {
-                var currentScroll = $(document).scrollTop();
-                var offset = plugin.wrapper.offset();
-                plugin.newElement.css({ "top": (currentScroll-offset.top)+"px"});
-            }
-
-            //avoid screen flickering in iPad
-            if(plugin.settings.iPadOptimization) {
-                plugin.wrapper.css({'overflow':'hidden', 'height':plugin.elementsOut.height()});
-            }
+            //start animating in
+            startAnimationIn();
 
             //Call custom function
             plugin.settings.onLoaded.call();
@@ -166,24 +176,27 @@
             //bind new url
             if(plugin.settings.updateUrl === true){
                 plugin.bindNewLocalUrl(plugin.element.attr(plugin.settings.urlAttr));
+
+                //set the document title to match the link
                 var title = plugin.element.attr('title');
-                if( typeof(title) != 'undefined'){
+                if( typeof(title) !== 'undefined'){
                     document.title = title;
                 }
             }
 
             //handle animationEnds
-            plugin.bindAnimationTranstionEnd(plugin.elementsOut, transitionAnimationEnd);
+            plugin.bindAnimationTranstionEnd(plugin.elementsOut, registerTransitionAnimationEnd);
+            return false;
         };
 
         //Retrive from url
-        var getUrlIfLocal = function(e) {
+        var registerLoadUrl = function(e) {
             var url = plugin.element.unbind(e)
                 .attr(plugin.settings.urlAttr);
 
-            //check if the link is local, if not continue as normal
-            if(!plugin.localUrl(url) && !plugin.settings.externalUrl) {
-                return;
+            //check if the link is local or not
+            if(!plugin.localUrl(url)) {
+                return false;
             }
 
             //prevent default link action
@@ -191,10 +204,15 @@
 
             //Call custom function
             plugin.settings.onClicked.call();
+
+            //start animating out
+            startAnimationOut();
+
             //load the next page
-            var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr){
+            var data  = $('<div>').load( url +' '+plugin.settings.elementsIn, function(response, status, xhr) {
                 registerCssPageTransitions.apply(plugin.element,[data,response,status,xhr]);
             });
+            return false;
         };
 
         //inits the plugin object
@@ -203,7 +221,7 @@
             plugin.elementsOut = $(plugin.settings.elementsOut);
 
             //add wrapper
-            if((plugin.settings.iPadOptimization || plugin.settings.alignWithPrevious)) {
+            if(plugin.settings.alignWithPrevious) {
                 plugin.wrapper = $('#js-CssPageTransitionsWrapper');
 
                 //create new if wrapper doesn’t exist
@@ -226,13 +244,14 @@
             }
 
             //bind scrollevent
-            if(plugin.settings.scrollDisable) {
-                bindWindowScroll(true);
+            if(plugin.settings.scrollDisable && plugin.canScroll === true) {
+                plugin.togglePreventWindowScroll(true);
+                plugin.canScroll = false;
             }
 
             //Trigger the plugin on click
-            plugin.bindTouchClicks(element, getUrlIfLocal);
-
+            plugin.bindTouchClicks(element, registerLoadUrl);
+            return false;
         };
 
         //Fire up the plugin
