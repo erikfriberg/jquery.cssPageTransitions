@@ -69,7 +69,7 @@
 
         //replaces click actions on both mobile and desktop with customFunction
         plugin.bindTouchClicks = function(elem,callbackFunction) {
-            var e = 'ontouchstart' in $(window) ? 'touchstart' : 'click';
+            var e = 'ontouchstart' in $(window) ? 'touchstart':'click';
             //bind callback event so that this is preserved
             $(elem).on(e, function(e){callbackFunction.apply(elem,[e]);});
         };
@@ -102,7 +102,6 @@
             }
         };
 
-
         var transitionAnimationEnd = function(e) {
             //return scroll control
             plugin.canScroll = true;
@@ -118,12 +117,13 @@
             if(plugin.settings.alignWithPrevious) {
                 plugin.newElement.css({ "top": "0px"});
                 var offset = plugin.wrapper.offset();
+                console.log(offset.top);
                 $(document).scrollTop(offset.top);
             }
 
             //remove iPad optimization
             if(plugin.settings.iPadOptimization) {
-                plugin.wrapper.css({'overflow':'visible','height':'auto'});
+                plugin.wrapper.css({'overflow':'visible', 'height':'auto'});
             }
 
             //remove classes
@@ -158,7 +158,7 @@
 
             //avoid screen flickering in iPad
             if(plugin.settings.iPadOptimization) {
-                plugin.wrapper.css({'overflow':'hidden', 'height' : plugin.elementsOut.height()});
+                plugin.wrapper.css({'overflow':'hidden', 'height':plugin.elementsOut.height()});
             }
 
             //Call custom function
@@ -201,8 +201,20 @@
         //inits the plugin object
         plugin.init = function() {
             plugin.settings = $.extend({}, defaults, options);
-            plugin.bindTouchClicks(element, getUrlIfLocal);
             plugin.elementsOut = $(plugin.settings.elementsOut);
+
+            //add wrapper
+            if((plugin.settings.iPadOptimization || plugin.settings.alignWithPrevious)) {
+                plugin.wrapper = $('#js-CssPageTransitionsWrapper');
+
+                //create new if wrapper doesn’t exist
+                if (!plugin.wrapper.length) {
+                    var wrapper = $('<div />').attr('id','js-CssPageTransitionsWrapper')
+                    .css({'position': 'relative', 'width': '100%'});
+                    plugin.elementsOut.wrapAll(wrapper);
+                    plugin.wrapper = $('#js-CssPageTransitionsWrapper');
+                }
+            }
 
             //store the initial page
             if('state' in window.history && window.history.state !== null) {
@@ -219,12 +231,9 @@
                 bindWindowScroll(true);
             }
 
-            //add wrapper if it doesn't already exists
-            if((plugin.settings.iPadOptimization || plugin.settings.alignWithPrevious) && (plugin.wrapper == null) || (!plugin.wrapper.length)){
-                plugin.wrapper = $('<div />').attr('id','js-registerCssPageTransitions-wrapper');
-                plugin.wrapper.css({'position': 'relative', 'width': '100%'});
-                plugin.elementsOut.wrapAll(plugin.wrapper);
-            }
+            //Trigger the plugin on click
+            plugin.bindTouchClicks(element, getUrlIfLocal);
+
         };
 
         //Fire up the plugin
