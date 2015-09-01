@@ -64,8 +64,8 @@ These are all the available settings that can be called together with the cssPag
 ```js
 $(‘a’).cssPageTransitions( { 
 	urlAttr: ‘href’,
-	onLoaded: function() {},
 	onClicked: function() {},
+	onLoaded: function() {},
 	elementsOut: ‘article’,
 	elementsIn: ‘article’,
 	classOut: ‘.is-moveout’,
@@ -81,11 +81,11 @@ $(‘a’).cssPageTransitions( {
 ### urlAttr
 Where the url to be loaded resides, default location is in the href-attribute.
 
-### onLoaded (function)
-Custom function that is called when the new page has been loaded successfully.
-
 ### onClicked (function)
 Custom function that is called when the user has clicked the link.
+
+### onLoaded (function)
+Custom function that is called when the new page has been loaded successfully.
 
 ### elementsOut
 Determines what element should be replaced with the newly loaded content.
@@ -112,7 +112,7 @@ Update the browser displayed url. If the clicked link contained a “title”-at
 Custom function that is called when the animation or transition of classOut is completed.
 
 ### onErrorLoading (function)
-Custom function that is called if the new page failed to load.
+Custom function that is called if the new page failed to load. If no custom function is defined the destination page will be called again; without ajax and transition effects.
 
 ## Install
 Feel free to install via bower
