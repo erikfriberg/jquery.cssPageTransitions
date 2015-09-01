@@ -20,8 +20,8 @@
         //setup defaults
         var defaults = {
             urlAttr: 'href',
-            onLoaded: function() {},
             onClicked: function() {},
+            onLoaded: function() {},
             elementsOut: 'article',
             elementsIn: 'article',
             classOut: '.is-moveout',
@@ -183,7 +183,7 @@
             }
 
             //handle animationEnds
-            plugin.bindAnimationTranstionEnd(plugin.elementsIn, registerTransitionAnimationEnd);
+            plugin.bindAnimationTranstionEnd(plugin.newElement, registerTransitionAnimationEnd);
             return false;
         };
 
